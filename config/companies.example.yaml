@@ -1,0 +1,71 @@
+# Template for the target list. Copy to config/companies.yaml, which is gitignored.
+#
+#   cp config/companies.example.yaml config/companies.yaml
+#
+# Every entry must be an ATS you have confirmed returns postings; the scan reads
+# them directly, so a wrong field means a failed scan rather than a wrong result.
+# To find one: open the careers page and look at the network tab for the request
+# that returns the job list, then match it to an adapter below.
+#
+# Adapter fields:
+#   workday     tenant, wd, site
+#   oraclehcm   host, siteNumber
+#   eightfold   efHost, domain
+#   greenhouse  slug
+#   ashby       slug
+#   amazon      (none)
+#   google      (none)
+#   netflix     (none)
+#
+# tier is preference only: 1 gets a small boost in ranking ahead of 2 and 3.
+
+companies:
+  # A real public board, so the first scan returns something. Replace it.
+  - name: GitLab
+    tier: 2
+    adapter: greenhouse
+    slug: gitlab
+    careers: https://about.gitlab.com/jobs/
+
+  # Boards that list everything. Same shape for any industry.
+  # - name: Example Retailer
+  #   tier: 2
+  #   adapter: greenhouse
+  #   slug: exampleretailer
+  #   careers: https://boards.greenhouse.io/exampleretailer
+
+  # Templates for the adapter types that need tenant details. Uncomment one and
+  # fill it in; leave them commented so `doctor` does not probe placeholders.
+  #
+  # - name: Example Bank
+  #   tier: 1
+  #   adapter: workday
+  #   tenant: example
+  #   wd: wd1
+  #   site: Example_Careers
+  #   careers: https://example.wd1.myworkdayjobs.com/Example_Careers
+  #
+  # - name: Example Bank
+  #   tier: 1
+  #   adapter: oraclehcm
+  #   host: example.fa.oraclecloud.com
+  #   siteNumber: CX_1001
+  #   careers: https://careers.example.com
+  #
+  # - name: Example Exchange
+  #   tier: 2
+  #   adapter: eightfold
+  #   efHost: example.eightfold.ai
+  #   domain: example.com
+  #   careers: https://example.com/careers
+  #
+  # - name: Example Startup
+  #   tier: 2
+  #   adapter: ashby
+  #   slug: examplestartup
+  #   careers: https://jobs.ashbyhq.com/examplestartup
+
+# Careers pages whose ATS has not been resolved yet. Kept here so they are not
+# lost, and skipped by the scan until an adapter is added above.
+pending:
+  - { name: Example Corp, careers: https://careers.example.com }

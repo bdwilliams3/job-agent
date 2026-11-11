@@ -1,0 +1,18 @@
+out/
+node_modules/
+*.tmp.ts
+
+# Personal career record: contact details and EEO answers. Template is
+# profile/experience.example.yaml.
+profile/experience.yaml
+
+# Personal market targeting: locations, title lanes, weights. Template is
+# config/filters.example.yaml.
+config/filters.yaml
+
+# Local working notes: target market, employer rules, application habits.
+AGENTS.md
+
+# Actual target list: who is being pursued. Template is
+# config/companies.example.yaml.
+config/companies.yaml

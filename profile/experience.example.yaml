@@ -1,0 +1,150 @@
+# Template for the canonical career record. Copy to profile/experience.yaml,
+# which is gitignored, then fill in your own history.
+#
+#   cp profile/experience.example.yaml profile/experience.yaml
+#
+# Tailoring reads that file; it never invents facts. Rules for editing:
+#   - Every bullet has an `id`. Tailoring selects by id, so keep ids stable.
+#   - `tags` drive matching against job descriptions. Add tags, not prose.
+#   - Only put numbers you can defend in an interview.
+#   - `alt` is an optional shorter phrasing used when space is tight.
+#   - `personal` feeds application forms, not resumes.
+#
+# Everything below is placeholder text. Replace it.
+
+name: Your Name
+headline: Your Headline | Second Claim | Third Claim
+location: City, State
+contact:
+  email: you@example.com
+  phone: 555-555-5555
+  linkedin: https://www.linkedin.com/in/your-handle/
+
+# What application forms ask for. Not used on a resume.
+personal:
+  first_name: Your
+  last_name: Name
+  preferred_name: Your
+  address: 1 Example Street
+  city: Your City
+  state: Your State
+  postal_code: "00000"
+  country: United States
+  pronouns: They/Them
+  gender_identity: Prefer not to say
+  race_ethnicity: [Prefer not to say]
+  hispanic_latino: false
+  veteran_status: I am not a protected veteran
+  disability_status: No, I do not have a disability
+  work_authorized: true
+  requires_sponsorship: false
+  # Free-text answer most boards ask for under "How did you hear about us?".
+  how_did_you_hear: Company careers site
+  sexual_orientation: Prefer not to say
+  # False when no agreement limits which roles can be taken.
+  non_compete: false
+
+# One line under "Earlier Career", for whatever came before this field.
+prior_line: >
+  One sentence on the earlier career, if you want one.
+
+summary: >
+  Two or three sentences on what you run end to end, the scale you operate at, and the
+  results you can defend. This is the paragraph the model rewrites per posting, so keep
+  it factual and specific.
+
+# Lanes the profile is aimed at. The ranker prefers jobs whose title matches a track.
+tracks:
+  # Lanes are free-form: the id is stored with each score, the label is printed in
+  # `rank`, and the words in both are matched against postings to guess the lane.
+  - id: leadership
+    label: Leadership roles
+    titles: [Director, Head of, Manager, Lead, Principal, VP]
+  - id: specialist
+    label: Senior individual contributor
+    titles: [Principal, Lead, Senior]
+
+# Tags, not prose. `strong` counts fully when scoring description overlap,
+# `working` partially, `leadership` a little. Use the vocabulary postings use;
+# hyphens are matched as spaces too.
+skill_tags:
+  strong:
+    - skill-one
+    - skill-two
+    - skill-three
+    - skill-four
+    - skill-five
+  working:
+    - skill-six
+    - skill-seven
+    - skill-eight
+  leadership:
+    - program-management
+    - team-leadership
+    - stakeholder-management
+
+# Newest role first. The renderer budgets bullets per role (6 / 4 / 3).
+roles:
+  - company: Example Employer
+    title: Your Job Title
+    start: 2022-01
+    end: present
+    location: City, State
+    group: example-group
+
+    # Marks which bullet leads the role; must match one of the ids below.
+    lead_bullet: example-headline-result
+
+    bullets:
+      - id: example-headline-result
+        text: >
+          Describe the outcome, not the activity: what changed, by how much, over what
+          period, and what you personally built or ran to make it happen.
+        alt: >
+          A one-line version for when space is tight.
+        metrics: {metric_before: 1000, metric_after: 10, window_months: 6}
+        tags: [skill-one, skill-two]
+
+      - id: example-second-bullet
+        text: >
+          Another result, described in the posting's own vocabulary where your record
+          genuinely supports it.
+        tags: [skill-three, skill-four]
+
+      - id: example-third-bullet
+        text: >
+          Tooling you built, the language you built it in, and the manual effort it
+          replaced.
+        tags: [skill-five]
+
+  - company: Previous Employer
+    title: Your Previous Job Title
+    start: 2018-01
+    end: 2022-01
+    location: City, State
+    bullets:
+      - id: previous-first
+        text: >
+          The strongest thing you did in this role, with the number attached.
+        tags: [skill-one]
+
+      - id: previous-second
+        text: >
+          A second result showing scope: regions, team size, budget, or systems touched.
+        tags: [skill-six]
+
+# Compressed onto one or two lines on the resume. Pre-career and non-technical.
+prior:
+  - company: Earlier Organisation
+    title: Earlier Job Title
+    start: 2014-01
+    end: 2018-01
+    text: >
+      One sentence on scope and outcome, for the reader who cares that you have managed
+      people and budgets before.
+    tags: [team-leadership]
+
+education:
+  - "Your University - Degree, Field of Study"
+certifications:
+  - Certification Issuer - Certification Name

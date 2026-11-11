@@ -1,0 +1,126 @@
+# Template for ranking and filtering rules. Copy to config/filters.yaml, which is
+# gitignored, then set it to your own market.
+#
+#   cp config/filters.example.yaml config/filters.yaml
+#
+# These rules run at rank time, never at scan time: the store keeps every posting
+# the scan saw, so changing this file never requires another scan.
+
+locations:
+  # Cities you would commute to. Match is substring, case-insensitive, so
+  # "New York" covers "NEW YORK, New York, United States".
+  accept_cities:
+    - Your City
+    - Nearby City
+    - Another Commutable City
+
+  # Two-letter state codes you accept.
+  accept_states: [CA, NY, WA]
+
+  # States where the whole state is commutable, without needing a listed city.
+  # Leave empty if you only work from the city list.
+  accept_states_fully: [CA]
+
+  # Rejected outright even when the state matches, because the commute is not real.
+  reject_cities:
+    - Far Away City
+
+  remote:
+    include: true
+    accept_patterns: ["remote", "work from home", "distributed", "anywhere", "telecommute"]
+
+titles:
+  # A title must match one of these and none of the excludes. List the level
+  # words you want: director, manager, counsel, partner, head of, senior ...
+  include:
+    - director
+    - head
+    - manager
+    - lead
+    - principal
+    - vice president
+    - vp
+    - chief
+    - engineer
+    - staff
+    - senior
+
+  # Guardrails. Management words appear in every function, so these keep other
+  # people's management jobs out of your search. Remove any entry that describes
+  # your own field: "legal" would drop every legal role, "design" every design role.
+  exclude:
+    - intern
+    - internship
+    - graduate
+    - new grad
+    - entry level
+    - recruiter
+    - talent acquisition
+    - sales
+    - account executive
+    - account management
+    - marketing
+    - brand
+    - design
+    - accounting
+    - payroll
+    - legal
+    - human resources
+    - customer success
+    - communications
+    - procurement
+    - product manager
+    - chief of staff
+
+# The field you are targeting, in any industry. `strong` terms in a title make a
+# posting a core match on their own; `adjacent` terms count only when the posting
+# backs the title up with enough of these terms in its body or department.
+#
+# The values below are placeholders. Examples of what people put here:
+#   legal      -> strong: [counsel, attorney, legal], adjacent: [compliance, contracts]
+#   healthcare -> strong: [clinical, nursing, patient care], adjacent: [quality, regulatory]
+#   security   -> strong: [security, cyber, appsec], adjacent: [risk, controls, iam]
+#
+# The values below target software engineering, which is broad enough to return
+# results from most employers on the first run. Swap them for your own field.
+domain:
+  strong:
+    - engineer
+    - engineering
+    - software
+    - platform
+
+  # Adjacent lanes. Keep this narrow: bare department names ("risk", "compliance")
+  # are entire professions of their own and will flood the queue.
+  adjacent:
+    - infrastructure
+    - reliability
+
+  # Mentions of a strong term in the body needed for an adjacent title to qualify.
+  # Descriptions are only consulted for adjacent titles, never for core ones.
+  min_description_hits: 4
+
+  # Set false to require a strong title and drop every adjacent lane.
+  adjacent_enabled: true
+
+  # Adjacent matches score lower than core ones at the same title level.
+  adjacent_score_multiplier: 0.85
+
+ranking:
+  # domain_fit carries the most weight: a right-level job with no skill overlap
+  # is a worse bet than a slightly junior job that overlaps heavily.
+  weights:
+    title_fit: 0.20
+    domain_fit: 0.35
+    seniority_fit: 0.20
+    location_fit: 0.15
+    recency: 0.10
+
+  # Postings older than this are treated as stale.
+  max_age_days: 60
+
+applications:
+  # semi_auto: generate the packet and apply URL, you submit.
+  # auto_submit is reserved for later; nothing in src/ acts on it yet.
+  mode: semi_auto
+  auto_submit: false
