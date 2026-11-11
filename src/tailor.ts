@@ -4,7 +4,7 @@
 // starts from the same facts), and optional model rewriting on top of it. A
 // deterministic packet can be produced with no credentials at all, which makes
 // rendering testable and keeps the tool usable offline.
-import type { Profile, ProfileBullet, ProfileRole } from "./config.ts";
+import type { Profile, ProfileBullet, ProfileProject, ProfileRole } from "./config.ts";
 import type { Job, Score } from "./types.ts";
 import type { LlmConfig } from "./llm.ts";
 import { complete } from "./llm.ts";
@@ -88,6 +88,29 @@ export function selectBullets(context: TailorContext): SelectedRole[] {
   return selected;
 }
 
+/**
+ * Projects answering this posting, best tag overlap first. Empty when nothing
+ * overlaps, so an unrelated project never pads the page.
+ */
+export function selectProjects(context: TailorContext, limit = 3): ProfileProject[] {
+  const { job, score, profile } = context;
+  const jobTokens = tokensOf(`${job.title} ${job.description}`);
+  return profile.projects
+    .map((project) => {
+      const haystack = `${project.name} ${project.text}`.toLowerCase();
+      let tokens = 0;
+      for (const token of jobTokens) if (haystack.includes(token)) tokens += 1;
+      // Tag overlap is the stronger signal: a project tagged for this lane beats one
+      // that merely mentions the same word in passing.
+      const tags = score.matchedTags.filter((tag) => project.tags.includes(tag)).length;
+      return { project, tags, tokens };
+    })
+    .filter((entry) => entry.tags > 0 || entry.tokens >= 2)
+    .sort((a, b) => b.tags - a.tags || b.tokens - a.tokens)
+    .slice(0, limit)
+    .map((entry) => entry.project);
+}
+
 function formatPeriod(start: string, end: string): string {
   const year = (value: string) => value.slice(0, 4);
   const endLabel = end === "present" ? "Present" : year(end);
@@ -131,6 +154,15 @@ export function buildResumeDraft(context: TailorContext): string {
     lines.push(`### ${role.company} — ${role.title}`);
     lines.push(`${formatPeriod(role.start, role.end)}${role.location ? ` | ${role.location}` : ""}`);
     for (const bullet of bullets) lines.push(`- ${bullet.text.trim()}`);
+    lines.push("");
+  }
+
+  const projects = selectProjects(context);
+  if (projects.length > 0) {
+    lines.push("## Selected Projects");
+    for (const project of projects) {
+      lines.push(`- **${project.name}** — ${project.text.trim()}`);
+    }
     lines.push("");
   }
 
@@ -185,6 +217,7 @@ function promptProfile(context: TailorContext): string {
     skill_tags: profile.skill_tags,
     roles: profile.roles,
     prior: profile.prior,
+    projects: selectProjects(context, 4),
     education: profile.education,
     certifications: profile.certifications,
   };
@@ -233,7 +266,9 @@ export async function generateResume(
       "Lead each role with its strongest bullet. Use up to 6 bullets for the current",
       "role, 4 for the next, and 3 for the one after; drop a bullet rather than pad it.",
       "Two pages is the right length for this record, so use the second page for real",
-      "content instead of compressing. Do not add a header, preamble, or commentary.",
+      "content instead of compressing. Keep the Projects section, rewording each entry",
+      "to answer this posting without adding claims it does not support.",
+      "Do not add a header, preamble, or commentary.",
     ].join("\n"),
   ].join("\n\n");
 

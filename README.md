@@ -129,13 +129,17 @@ Three files are yours and stay out of git. Each ships as a template in the repo:
 
 | Your file (gitignored) | Template | Holds |
 |---|---|---|
-| `profile/experience.yaml` | `experience.example.yaml` | Career record: roles, bullets, ids, tags, metrics, contact and form answers |
+| `profile/experience.yaml` | `experience.example.yaml` | Career record: roles, bullets, ids, tags, metrics, projects, contact and form answers |
 | `config/filters.yaml` | `filters.example.yaml` | Locations, level words, field terms, scoring weights |
 | `config/companies.yaml` | `companies.example.yaml` | Target employers and how to reach each ATS |
 
 `profile/experience.yaml` is the source of truth for tailoring: every bullet has an `id`
 and `tags`, selection is by tag overlap, and the model is told never to invent employers,
 dates, or numbers, so its numbers are the only numbers that can appear.
+
+`profile/experience.yaml` can also list `projects` (name, one-line text, tags, optional
+URL). They are selected per posting by tag overlap and rendered as "Selected Projects", so
+a project only appears when it answers the job.
 
 `config/filters.yaml` holds two things that make the tool industry-agnostic: `titles`
 (the level words you want, and the ones to exclude) and `domain` (strong terms that define

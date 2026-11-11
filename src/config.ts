@@ -66,6 +66,15 @@ export interface ProfileRole {
   bullets: ProfileBullet[];
 }
 
+/** A side project or public repo worth showing when it matches the posting. */
+export interface ProfileProject {
+  name: string;
+  text: string;
+  tags: string[];
+  /** Optional public link; only add one you are happy for a recruiter to open. */
+  url?: string;
+}
+
 export interface ProfilePrior {
   company: string;
   title: string;
@@ -117,6 +126,8 @@ export interface Profile {
   /** One line summarising the earlier career; rendered under Earlier Career. */
   prior_line?: string;
   prior: ProfilePrior[];
+  /** Optional: selected only when a posting overlaps their tags. */
+  projects: ProfileProject[];
   education: string[];
   certifications: string[];
 }

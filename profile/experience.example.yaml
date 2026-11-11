@@ -144,6 +144,16 @@ prior:
       people and budgets before.
     tags: [team-leadership]
 
+# Public projects or side work. Selected per posting by tag overlap, so only the
+# ones that answer the job appear. Empty list is fine.
+projects:
+  - name: example-project
+    text: >
+      One or two sentences: what it does, what you built, and the technology. Keep
+      claims to what the repository or write-up can show.
+    tags: [skill-one, skill-two]
+    url: https://github.com/your-handle/example-project
+
 education:
   - "Your University - Degree, Field of Study"
 certifications:
