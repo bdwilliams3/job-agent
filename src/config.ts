@@ -113,7 +113,13 @@ export interface Profile {
   name: string;
   headline: string;
   location: string;
-  contact: { email: string; phone: string; linkedin?: string };
+  contact: {
+    email: string;
+    phone: string;
+    linkedin?: string;
+    github?: string;
+    website?: string;
+  };
   personal: PersonalDetails;
   summary: string;
   tracks: Array<{ id: string; label: string; titles: string[] }>;

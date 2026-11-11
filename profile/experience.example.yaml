@@ -19,6 +19,8 @@ contact:
   email: you@example.com
   phone: 555-555-5555
   linkedin: https://www.linkedin.com/in/your-handle/
+  # Optional. Linked from the resume header and used to answer form fields.
+  github: https://github.com/your-handle
 
 # What application forms ask for. Not used on a resume.
 personal:

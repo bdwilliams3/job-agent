@@ -139,6 +139,10 @@ export function buildResumeDraft(context: TailorContext): string {
   // Blank line keeps these as separate paragraphs; markdown joins adjacent lines.
   lines.push("");
   lines.push(`${profile.contact.email} | ${profile.contact.phone} | ${profile.location}`);
+  const links = [profile.contact.linkedin, profile.contact.github, profile.contact.website]
+    .filter((link): link is string => Boolean(link))
+    .map((link) => link.replace(/^https?:\/\//, "").replace(/\/$/, ""));
+  if (links.length > 0) lines.push(links.join(" | "));
   lines.push("");
 
   lines.push("## Summary");

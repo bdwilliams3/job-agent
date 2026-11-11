@@ -137,7 +137,12 @@ Three files are yours and stay out of git. Each ships as a template in the repo:
 and `tags`, selection is by tag overlap, and the model is told never to invent employers,
 dates, or numbers, so its numbers are the only numbers that can appear.
 
-`profile/experience.yaml` can also list `projects` (name, one-line text, tags, optional
+`profile/experience.yaml`'s `contact` block takes `email`, `phone`, and optional
+`linkedin`, `github`, `website`. The links are stripped of their scheme and printed under the
+contact line in the resume header, and they are what you paste into the matching form fields
+when applying.
+
+The profile can also list `projects` (name, one-line text, tags, optional
 URL). They are selected per posting by tag overlap and rendered as "Selected Projects", so
 a project only appears when it answers the job.
 
