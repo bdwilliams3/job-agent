@@ -6,11 +6,13 @@ import type { CompanySource, Job } from "../types.ts";
 const PAGE_SIZE = 20;
 
 interface WorkdayPosting {
-  title: string;
-  externalPath: string;
-  locationsText: string;
-  postedOn: string;
-  bulletFields: string[];
+  // Tenants vary: some summary rows carry only bulletFields, so these are
+  // optional and unlistable rows are skipped by the scan.
+  title?: string;
+  externalPath?: string;
+  locationsText?: string;
+  postedOn?: string;
+  bulletFields?: string[];
 }
 
 interface WorkdaySearchResponse {
@@ -47,9 +49,9 @@ function cxsBase(company: CompanySource): string {
 }
 
 /** Workday exposes absolute routes like /job/City-ST/Title_REQ123. */
-function externalIdOf(posting: WorkdayPosting): string {
+function externalIdOf(posting: { externalPath: string; bulletFields?: string[] }): string {
   const fromPath = posting.externalPath.match(/_(R\d+|[A-Z]*\d{4,})$/)?.[1];
-  return fromPath ?? posting.bulletFields[0] ?? posting.externalPath;
+  return fromPath ?? posting.bulletFields?.[0] ?? posting.externalPath;
 }
 
 /** Workday renders relative dates ("Posted 2 Days Ago"), so resolve them against now. */
@@ -67,7 +69,10 @@ function isRemote(locationsText: string): boolean {
   return /remote|virtual|work from home/i.test(locationsText);
 }
 
-function toJob(company: CompanySource, posting: WorkdayPosting): Job {
+function toJob(
+  company: CompanySource,
+  posting: WorkdayPosting & { title: string; externalPath: string },
+): Job {
   const externalId = externalIdOf(posting);
   return {
     key: `${company.name}:${externalId}`,
@@ -75,13 +80,13 @@ function toJob(company: CompanySource, posting: WorkdayPosting): Job {
     tier: company.tier,
     externalId,
     title: posting.title,
-    locations: [posting.locationsText],
-    remote: isRemote(posting.locationsText),
+    locations: posting.locationsText ? [posting.locationsText] : [],
+    remote: isRemote(posting.locationsText ?? ""),
     url: `${siteBase(company)}/en-US/${required(company.site, "site")}${posting.externalPath}`,
     description: "",
     descriptionQuality: "listing",
     department: null,
-    postedAt: parsePostedOn(posting.postedOn),
+    postedAt: parsePostedOn(posting.postedOn ?? ""),
   };
 }
 
@@ -104,7 +109,13 @@ export async function scanWorkday(
     });
     total = page.total;
     if (page.jobPostings.length === 0) break;
-    for (const posting of page.jobPostings) jobs.push(toJob(company, posting));
+    for (const posting of page.jobPostings) {
+      // A row without a title or path cannot be listed or opened; skip it rather
+      // than inventing placeholders that would pollute the store.
+      const { title, externalPath } = posting;
+      if (!title || !externalPath) continue;
+      jobs.push(toJob(company, { ...posting, title, externalPath }));
+    }
     offset += PAGE_SIZE;
   }
   return jobs.slice(0, options.maxJobs);

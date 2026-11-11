@@ -28,6 +28,11 @@ locations:
   remote:
     include: true
     accept_patterns: ["remote", "work from home", "distributed", "anywhere", "telecommute"]
+    # Rejected before anything else: "Remote - India" is not remote for a US
+    # candidate. List the countries/regions you cannot work in.
+    reject_patterns:
+      - EMEA
+      - APAC
 
 titles:
   # A title must match one of these and none of the excludes. List the level

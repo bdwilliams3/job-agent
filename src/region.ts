@@ -117,6 +117,8 @@ export function classifyLocation(job: Job, filters: Filters): LocationVerdict {
     if (!filters.locations.remote.include) {
       return { ok: false, reason: "remote excluded by config" };
     }
+    const excluded = containsAny(text, filters.locations.remote.reject_patterns);
+    if (excluded) return { ok: false, reason: `remote in ${excluded}` };
     return { ok: true, kind: "remote", reason: "remote" };
   }
 

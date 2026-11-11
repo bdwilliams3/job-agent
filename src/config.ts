@@ -22,7 +22,12 @@ export interface Filters {
     /** States accepted as local when the posting names the state but no accepted city. */
     accept_states_fully: string[];
     reject_cities: string[];
-    remote: { include: boolean; accept_patterns: string[] };
+    remote: {
+      include: boolean;
+      accept_patterns: string[];
+      /** Rejected first: "Remote - India" is not remote for a US candidate. */
+      reject_patterns: string[];
+    };
   };
   titles: { include: string[]; exclude: string[] };
   /** Terms that define the field being targeted, in any industry. */

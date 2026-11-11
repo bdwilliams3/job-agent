@@ -186,4 +186,8 @@ reject their own details API). Set `CHROME_BIN` if it is not in a standard place
   imperfect; add terms.
 - **Some Eightfold tenants** return 403 to unauthenticated calls and have to stay in
   `pending` until an adapter workaround exists.
+- **Remote means the same country.** `locations.remote.reject_patterns` drops remote
+  postings that name a country or region you cannot work in ("Remote - India", "EMEA"),
+  which is why that list exists in the filters file. Leave it empty if you will work
+  anywhere.
 - Scores are a heuristic, not a judgment. Read `rank` output before applying.
